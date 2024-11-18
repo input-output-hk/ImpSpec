@@ -1,3 +1,4 @@
+{-# LANGUAGE CPP #-}
 {-# LANGUAGE ImplicitParams #-}
 
 module Test.ImpSpec.Expectations (
@@ -67,7 +68,7 @@ import Test.Hspec (
   shouldStartWith,
   shouldThrow,
  )
-import Test.Hspec.Core.Spec (FailureReason (ColorizedReason), Location (..), ResultStatus (Failure))
+import Test.Hspec.Core.Spec (FailureReason (..), Location (..), ResultStatus (Failure))
 import UnliftIO.Exception (evaluateDeep, throwIO)
 
 infix 1 `shouldBeRight`
@@ -77,7 +78,14 @@ infix 1 `shouldBeRight`
 -- that indicate color output.
 assertColorFailure :: HasCallStack => String -> IO a
 assertColorFailure msg =
-  throwIO $ Failure (callStackToLocation ?callStack) (ColorizedReason msg)
+  throwIO $
+    Failure
+      (callStackToLocation ?callStack)
+#if MIN_VERSION_hspec_core(2,11,0)
+      (ColorizedReason msg)
+#else
+      (Reason msg)
+#endif
 
 -- | Return value on the `Right` and fail otherwise.
 --
