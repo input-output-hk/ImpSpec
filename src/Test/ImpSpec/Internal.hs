@@ -1,4 +1,5 @@
 {-# LANGUAGE BangPatterns #-}
+{-# LANGUAGE CPP #-}
 {-# LANGUAGE DefaultSignatures #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE FlexibleInstances #-}
@@ -17,6 +18,7 @@ module Test.ImpSpec.Internal where
 
 import Control.DeepSeq (NFData)
 import Control.Monad (void)
+import qualified Control.Monad.Fail as Fail
 import Control.Monad.Reader (MonadReader (..), ReaderT (..), asks)
 import Control.Monad.State.Strict (MonadState (..))
 import Data.Kind (Type)
@@ -62,6 +64,9 @@ import UnliftIO.Exception (
   throwIO,
  )
 import UnliftIO.IORef
+#if !MIN_VERSION_base(4,11,0)
+import Data.Monoid ((<>))
+#endif
 
 data ImpState t = ImpState
   { impStateSpecState :: !(ImpSpecState t)
@@ -129,17 +134,17 @@ newtype ImpM t a = ImpM {unImpM :: ReaderT (ImpEnv t) IO a}
 
 instance env ~ ImpSpecEnv t => MonadReader env (ImpM t) where
   ask = impEnvSpecEnv <$> ImpM ask
-  local f = ImpM . local (\e -> e {impEnvSpecEnv = f (impEnvSpecEnv e)}) . unImpM
+  local f = ImpM . local (\e -> e{impEnvSpecEnv = f (impEnvSpecEnv e)}) . unImpM
 
-instance MonadFail (ImpM t) where
+instance Fail.MonadFail (ImpM t) where
   fail = liftIO . assertFailure
 
 instance s ~ ImpSpecState t => MonadState s (ImpM t) where
   state f = do
-    ImpEnv {impEnvStateRef} <- ImpM ask
+    ImpEnv{impEnvStateRef} <- ImpM ask
     curState <- readIORef impEnvStateRef
     let !(result, !newSpecState) = f $ impStateSpecState curState
-    writeIORef impEnvStateRef (curState {impStateSpecState = newSpecState})
+    writeIORef impEnvStateRef (curState{impStateSpecState = newSpecState})
     pure result
   get = fmap impStateSpecState . readIORef . impEnvStateRef =<< ImpM ask
 
@@ -152,7 +157,7 @@ instance MonadGen (ImpM t) where
     applyQCGen $ \qcGen -> ((), integerVariant (toInteger n) qcGen)
     action
   sized f = ImpM (asks impEnvQCSize) >>= f
-  resize n (ImpM f) = ImpM $ local (\env -> env {impEnvQCSize = n}) f
+  resize n (ImpM f) = ImpM $ local (\env -> env{impEnvQCSize = n}) f
   choose r = applyQCGen (randomR r)
 
 instance HasStatefulGen (IOGenM QCGen) (ImpM t) where
@@ -184,7 +189,7 @@ instance (Arbitrary a, Show a, ImpSpec t, Testable p) => Example (a -> ImpM t p)
             qcGen <- applyQCGen split
             logs <- getLogs
             pure (Just (qcGen, qcSize), t, logs)
-          let params' = params {paramsQuickCheckArgs = args {replay = r, chatty = False}}
+          let params' = params{paramsQuickCheckArgs = args{replay = r, chatty = False}}
           res <-
             evaluateExample
               (counterexample (ansiDocToString logs) testable)
@@ -207,7 +212,7 @@ getLogs = do
 modifyLogs :: (Doc AnsiStyle -> Doc AnsiStyle) -> ImpM t ()
 modifyLogs f = do
   ref <- ImpM $ asks impEnvStateRef
-  modifyIORef ref $ \s -> s {impStateLog = f (impStateLog s)}
+  modifyIORef ref $ \s -> s{impStateLog = f (impStateLog s)}
 
 -- | Override the QuickCheck generator using a fixed seed.
 impSetSeed :: Int -> ImpM t ()
@@ -248,7 +253,7 @@ runImpM ::
   ImpInit t ->
   ImpM t b ->
   IO (b, ImpState t)
-runImpM mQCGen mQCSize ImpInit {impInitEnv, impInitState} action = do
+runImpM mQCGen mQCSize ImpInit{impInitEnv, impInitState} action = do
   let qcSize = fromMaybe 30 mQCSize
       qcGen = fromMaybe (mkQCGen 2024) mQCGen
   ioRef <-
@@ -359,7 +364,7 @@ logWithCallStack :: CallStack -> Doc AnsiStyle -> ImpM t ()
 logWithCallStack callStack entry =
   modifyLogs (<> stack <> line <> indent 2 entry <> line)
   where
-    prettySrcLoc' SrcLoc {srcLocModule, srcLocStartLine} =
+    prettySrcLoc' SrcLoc{srcLocModule, srcLocStartLine} =
       hcat
         [ annotate (color c) d
         | (c, d) <-

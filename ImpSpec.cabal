@@ -1,4 +1,4 @@
-cabal-version:      3.0
+cabal-version:      >=1.10
 name:               ImpSpec
 version:            0.1.0.0
 license:            Apache-2.0
@@ -11,6 +11,17 @@ synopsis:
 category:           Control
 build-type:         Simple
 extra-source-files: CHANGELOG.md
+tested-with:        GHC == 8.2.2
+                  , GHC == 8.4.4
+                  , GHC == 8.6.5
+                  , GHC == 8.8.4
+                  , GHC == 8.10.7
+                  , GHC == 9.0.2
+                  , GHC == 9.2.8
+                  , GHC == 9.4.8
+                  , GHC == 9.6.6
+                  , GHC == 9.8.2
+                  , GHC == 9.10.1
 
 source-repository head
     type:     git
@@ -30,22 +41,22 @@ library
     default-language: Haskell2010
     ghc-options:
         -Wall -Wcompat -Wincomplete-record-updates
-        -Wincomplete-uni-patterns -Wredundant-constraints -Wunused-packages
+        -Wincomplete-uni-patterns -Wredundant-constraints
 
     build-depends:
-        base >=4.14 && <5,
+        base >=4.9 && <5,
         bytestring,
         deepseq,
         hspec,
-        hspec-core,
+        hspec-core >=2.11,
         hspec-expectations-lifted,
         HUnit,
         mtl,
         QuickCheck,
         quickcheck-transformer,
-        prettyprinter,
-        prettyprinter-ansi-terminal,
-        random,
+        prettyprinter >=1.7,
+        prettyprinter-ansi-terminal >=1.1.2,
+        random >=1.2,
         text,
         unliftio
 
@@ -57,7 +68,7 @@ test-suite tests
     default-language: Haskell2010
     ghc-options:
         -Wall -Wcompat -Wincomplete-record-updates
-        -Wincomplete-uni-patterns -Wredundant-constraints -Wunused-packages
+        -Wincomplete-uni-patterns -Wredundant-constraints
         -threaded -rtsopts
 
     build-depends:

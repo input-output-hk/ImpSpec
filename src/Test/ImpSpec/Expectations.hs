@@ -86,7 +86,7 @@ assertColorFailure msg =
 -- show the content of the `Left` when expectation fails.
 expectRight :: (HasCallStack, Show a) => Either a b -> IO b
 expectRight (Right r) = pure $! r
-expectRight (Left l) = assertFailure $ "Expected Right, got Left:\n" <> show l
+expectRight (Left l) = assertFailure $ "Expected Right, got Left:\n" ++ show l
 
 -- | Same as `expectRight`, but also evaluate the returned value to NF
 expectRightDeep :: (HasCallStack, Show a, NFData b) => Either a b -> IO b
@@ -107,7 +107,7 @@ shouldBeRight e x = expectRight e >>= (`shouldBe` x)
 -- show the content of the `Right` when expectation fails.
 expectLeft :: (HasCallStack, Show b) => Either a b -> IO a
 expectLeft (Left l) = pure $! l
-expectLeft (Right r) = assertFailure $ "Expected Left, got Right:\n" <> show r
+expectLeft (Right r) = assertFailure $ "Expected Left, got Right:\n" ++ show r
 
 -- | Same as `expectLeft`, but also evaluate the returned value to NF
 expectLeftDeep :: (HasCallStack, NFData a, Show b) => Either a b -> IO a
