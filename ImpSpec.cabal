@@ -1,16 +1,19 @@
-cabal-version:      >=1.10
+cabal-version:      >=1.18
 name:               ImpSpec
 version:            0.1.0.0
 license:            Apache-2.0
+license-file:       LICENSE
 maintainer:         operations@iohk.io
 author:             IOHK
-homepage:           https://github.com/intersectmbo/cardano-ledger
+homepage:           https://github.com/input-output-hk/ImpSpec
 synopsis:
-    Imperative approach of testing that extends HSpec and QuickCheck
-
+    Imperative approach to testing stateful applications. ImpSpec is build on top of HSpec and QuickCheck
+description:
+    Let a little imp help you discover all the bugs in your stateful Haskell program.
 category:           Control
 build-type:         Simple
-extra-source-files: CHANGELOG.md
+extra-doc-files:    CHANGELOG.md
+extra-source-files: README.md
 tested-with:        GHC == 8.2.2
                   , GHC == 8.4.4
                   , GHC == 8.6.5
