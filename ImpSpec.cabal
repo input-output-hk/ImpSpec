@@ -10,7 +10,8 @@ synopsis:
 
 category:           Control
 build-type:         Simple
-extra-source-files: CHANGELOG.md
+extra-doc-files:    CHANGELOG.md
+extra-source-files: README.md
 tested-with:        GHC == 8.2.2
                   , GHC == 8.4.4
                   , GHC == 8.6.5
