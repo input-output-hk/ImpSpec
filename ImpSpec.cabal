@@ -45,7 +45,7 @@ library
         quickcheck-transformer,
         prettyprinter >=1.7,
         prettyprinter-ansi-terminal,
-        random,
+        random >=1.2,
         text,
         unliftio
 

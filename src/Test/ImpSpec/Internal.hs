@@ -1,4 +1,5 @@
 {-# LANGUAGE BangPatterns #-}
+{-# LANGUAGE CPP #-}
 {-# LANGUAGE DefaultSignatures #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE FlexibleInstances #-}
@@ -63,6 +64,9 @@ import UnliftIO.Exception (
   throwIO,
  )
 import UnliftIO.IORef
+#if !MIN_VERSION_base(4,11,0)
+import Data.Monoid ((<>))
+#endif
 
 data ImpState t = ImpState
   { impStateSpecState :: !(ImpSpecState t)
