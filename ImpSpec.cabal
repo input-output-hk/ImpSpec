@@ -10,7 +10,7 @@ synopsis:
     Imperative approach to testing stateful applications. ImpSpec is build on top of HSpec and QuickCheck
 description:
     Let a little imp help you discover all the bugs in your stateful Haskell program.
-category:           Control
+category:           Testing
 build-type:         Simple
 extra-doc-files:    CHANGELOG.md
 extra-source-files: README.md
