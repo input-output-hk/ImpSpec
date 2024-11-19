@@ -37,7 +37,7 @@ library
         bytestring,
         deepseq,
         hspec,
-        hspec-core,
+        hspec-core >=2.11,
         hspec-expectations-lifted,
         HUnit,
         mtl,
@@ -57,7 +57,7 @@ test-suite tests
     default-language: Haskell2010
     ghc-options:
         -Wall -Wcompat -Wincomplete-record-updates
-        -Wincomplete-uni-patterns -Wredundant-constraints -Wunused-packages
+        -Wincomplete-uni-patterns -Wredundant-constraints
         -threaded -rtsopts
 
     build-depends:
