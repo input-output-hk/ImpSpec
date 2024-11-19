@@ -33,7 +33,7 @@ library
         -Wincomplete-uni-patterns -Wredundant-constraints
 
     build-depends:
-        base >=4.10 && <5,
+        base >=4.9 && <5,
         bytestring,
         deepseq,
         hspec,
