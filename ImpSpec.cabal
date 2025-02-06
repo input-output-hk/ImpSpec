@@ -28,8 +28,7 @@ tested-with:        GHC == 8.2.2
 
 source-repository head
     type:     git
-    location: https://github.com/intersectmbo/cardano-ledger
-    subdir:   libs/ImpSpec
+    location: https://github.com/input-output-hk/ImpSpec
 
 library
     exposed-modules:
@@ -77,3 +76,7 @@ test-suite tests
     build-depends:
         base,
         ImpSpec
+
+source-repository head
+  type:     git
+  location: https://github.com/input-output-hk/ImpSpec
