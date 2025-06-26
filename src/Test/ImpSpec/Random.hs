@@ -35,6 +35,7 @@ instance
   askStatefulGen = ReaderT (pure . getGenEnv)
 
 uniformM ::
+  forall a g m.
   ( HasStatefulGen g m
   , R.Uniform a
   ) =>
@@ -43,6 +44,7 @@ uniformM = askStatefulGen >>= R.uniformM
 {-# INLINE uniformM #-}
 
 uniformRM ::
+  forall a g m.
   ( HasStatefulGen g m
   , R.UniformRange a
   ) =>
@@ -52,6 +54,7 @@ uniformRM r = askStatefulGen >>= R.uniformRM r
 {-# INLINE uniformRM #-}
 
 uniformListM ::
+  forall a g m.
   ( HasStatefulGen g m
   , R.Uniform a
   ) =>
@@ -61,6 +64,7 @@ uniformListM n = askStatefulGen >>= R.uniformListM n
 {-# INLINE uniformListM #-}
 
 uniformListRM ::
+  forall a g m.
   (HasStatefulGen g m, R.UniformRange a) =>
   (a, a) ->
   Int ->
@@ -77,5 +81,7 @@ uniformShortByteStringM n = askStatefulGen >>= R.uniformShortByteString n
 {-# INLINE uniformShortByteStringM #-}
 
 -- | Lifted version of `QC.arbitrary`.
-arbitrary :: (QC.Arbitrary a, MonadGen m) => m a
+arbitrary ::
+  forall a m.
+  (QC.Arbitrary a, MonadGen m) => m a
 arbitrary = liftGen QC.arbitrary

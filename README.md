@@ -17,10 +17,10 @@ testing of stateful applications.
 |:--------------:|:---------:|:-------:|:-------:|:---:|
 | [![Build Status][GA-badge]][GA-link] | [![Coverage Status][Coveralls-badge]][Coveralls-link] | [![Hackage][Hackage-badge]][Hackage-link] | [![Nightly][Nightly-badge]][Nightly-link] | [![LTS][LTS-badge]][LTS-link]
 
-[GA-badge]: https://github.com/lehins/ImpSpec/workflows/CI/badge.svg
-[GA-link]: https://github.com/lehins/ImpSpec/actions
-[Coveralls-badge]: https://coveralls.io/repos/github/lehins/ImpSpec/badge.svg?branch=master
-[Coveralls-link]: https://coveralls.io/github/lehins/ImpSpec?branch=master
+[GA-badge]: https://github.com/input-output-hk/ImpSpec/workflows/CI/badge.svg
+[GA-link]: https://github.com/input-output-hk/ImpSpec/actions
+[Coveralls-badge]: https://coveralls.io/repos/github/input-output-hk/ImpSpec/badge.svg?branch=master
+[Coveralls-link]: https://coveralls.io/github/input-output-hk/ImpSpec?branch=master
 [Hackage-badge]: https://img.shields.io/hackage/v/ImpSpec.svg
 [Hackage-link]: https://hackage.haskell.org/package/ImpSpec
 [Nightly-badge]: https://www.stackage.org/package/ImpSpec/badge/nightly
