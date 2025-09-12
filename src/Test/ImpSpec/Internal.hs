@@ -219,7 +219,7 @@ modifyLogs f = do
 
 -- | Override the QuickCheck generator using a fixed seed.
 impSetSeed :: Int -> ImpM t ()
-impSetSeed seed = applyQCGen $ \_ -> ((), mkQCGen seed)
+impSetSeed seed = applyQCGen $ const ((), mkQCGen seed)
 
 evalImpGenM :: ImpSpec t => ImpInit t -> ImpM t b -> Gen (IO b)
 evalImpGenM impInit = fmap (fmap fst) . runImpGenM impInit
