@@ -5,6 +5,8 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE UndecidableInstances #-}
+-- Due to usage of `uniformShortByteString`
+{-# OPTIONS_GHC -Wno-deprecations #-}
 
 module Test.ImpSpec.Random where
 
