@@ -28,7 +28,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macOS-latest, windows-latest]
-        resolver: [lts-14, lts-16, lts-18, lts-19, lts-20, lts-21, lts-22, nightly]
+        resolver: [lts-14, lts-16, lts-18, lts-19, lts-20, lts-21, lts-22, lts-23, lts-24, nightly]
         include:
           - resolver: lts-14
             ghc: 8.6.5
@@ -44,9 +44,16 @@ jobs:
             ghc: 9.4.8
             stack-yaml: stack-coveralls.yaml
           - resolver: lts-22
-            ghc: 9.6.6
+            ghc: 9.6.7
+            stack-yaml: stack.yaml
+          - resolver: lts-23
+            ghc: 9.8.4
+            stack-yaml: stack.yaml
+          - resolver: lts-24
+            ghc: 9.10.2
+            stack-yaml: stack.yaml
           - resolver: nightly
-            ghc: 9.8.2
+            ghc: 9.12.2
             stack-yaml: stack.yaml
         exclude:
           # Newer MacOS does not support older GHC:
@@ -58,6 +65,9 @@ jobs:
             os: macOS-latest
           - resolver: lts-19
             os: macOS-latest
+          # Windows builds seem to be broken with nightly
+          - resolver: nightly
+            os: windows-latest
 
     env:
       STACK_YAML: ${{ matrix.stack-yaml || matrix.ghc != '' && format('stack.ghc-{0}.yaml', matrix.ghc) || 'stack.yaml' }}
@@ -134,21 +144,24 @@ jobs:
           - { cabal: "3.12", os: ubuntu-latest, ghc: "9.0.2" }
           - { cabal: "3.12", os: ubuntu-latest, ghc: "9.2.8" }
           - { cabal: "3.12", os: ubuntu-latest, ghc: "9.4.8" }
-          - { cabal: "3.12", os: ubuntu-latest, ghc: "9.6.6" }
-          - { cabal: "3.12", os: ubuntu-latest, ghc: "9.8.2" }
-          - { cabal: "3.12", os: ubuntu-latest, ghc: "9.10.1" }
+          - { cabal: "3.12", os: ubuntu-latest, ghc: "9.6.7" }
+          - { cabal: "3.12", os: ubuntu-latest, ghc: "9.8.4" }
+          - { cabal: "3.12", os: ubuntu-latest, ghc: "9.10.2" }
+          - { cabal: "3.12", os: ubuntu-latest, ghc: "9.12.2" }
           - { cabal: "3.12", os: windows-latest, ghc: "9.0.2" }
           - { cabal: "3.12", os: windows-latest, ghc: "9.2.8" }
           - { cabal: "3.12", os: windows-latest, ghc: "9.4.8" }
-          - { cabal: "3.12", os: windows-latest, ghc: "9.6.6" }
-          - { cabal: "3.12", os: windows-latest, ghc: "9.8.2" }
-          - { cabal: "3.12", os: windows-latest, ghc: "9.10.1" }
+          - { cabal: "3.12", os: windows-latest, ghc: "9.6.7" }
+          - { cabal: "3.12", os: windows-latest, ghc: "9.8.4" }
+          - { cabal: "3.12", os: windows-latest, ghc: "9.10.2" }
+          - { cabal: "3.12", os: windows-latest, ghc: "9.12.2" }
           - { cabal: "3.12", os: macOS-13, ghc: "9.0.2" }
           - { cabal: "3.12", os: macOS-latest, ghc: "9.2.8" }
           - { cabal: "3.12", os: macOS-latest, ghc: "9.4.8" }
-          - { cabal: "3.12", os: macOS-latest, ghc: "9.6.6" }
-          - { cabal: "3.12", os: macOS-latest, ghc: "9.8.2" }
-          - { cabal: "3.12", os: macOS-latest, ghc: "9.10.1" }
+          - { cabal: "3.12", os: macOS-latest, ghc: "9.6.7" }
+          - { cabal: "3.12", os: macOS-latest, ghc: "9.8.4" }
+          - { cabal: "3.12", os: macOS-latest, ghc: "9.10.2" }
+          - { cabal: "3.12", os: macOS-latest, ghc: "9.12.2" }
 
     env:
       cache-version: v0 # bump up this version to invalidate currently stored cache

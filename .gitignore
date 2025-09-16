@@ -1,0 +1,4 @@
+/dist-newstyle/
+/.ghc.environment.*
+/.pre-commit-config.yaml
+/result
