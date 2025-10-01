@@ -13,8 +13,6 @@
 {-# LANGUAGE TypeFamilyDependencies #-}
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE UndecidableInstances #-}
--- Due to usage of `split`
-{-# OPTIONS_GHC -Wno-deprecations #-}
 
 module Test.ImpSpec.Internal where
 
