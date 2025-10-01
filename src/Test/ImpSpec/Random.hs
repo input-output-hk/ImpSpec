@@ -1,3 +1,4 @@
+{-# LANGUAGE CPP #-}
 {-# LANGUAGE DefaultSignatures #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE FlexibleInstances #-}
@@ -76,7 +77,11 @@ uniformByteStringM n = askStatefulGen >>= R.uniformByteStringM n
 {-# INLINE uniformByteStringM #-}
 
 uniformShortByteStringM :: HasStatefulGen a m => Int -> m ShortByteString
+#if MIN_VERSION_random(1,3,0)
+uniformShortByteStringM n = askStatefulGen >>= R.uniformShortByteStringM n
+#else
 uniformShortByteStringM n = askStatefulGen >>= R.uniformShortByteString n
+#endif
 {-# INLINE uniformShortByteStringM #-}
 
 -- | Lifted version of `QC.arbitrary`.

@@ -13,6 +13,9 @@
 {-# LANGUAGE TypeFamilyDependencies #-}
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE UndecidableInstances #-}
+#if MIN_VERSION_random(1,3,0) && !MIN_VERSION_QuickCheck(2,16,1)
+{-# OPTIONS_GHC -Wno-orphans #-}
+#endif
 
 module Test.ImpSpec.Internal where
 
@@ -39,7 +42,11 @@ import Prettyprinter (
   vsep,
  )
 import Prettyprinter.Render.Terminal (AnsiStyle, Color (..), color, renderLazy)
-import System.Random (randomR, split)
+#if MIN_VERSION_random(1,3,0)
+import System.Random (randomR, SplitGen (splitGen))
+#else
+import System.Random (randomR, RandomGen (split))
+#endif
 import System.Random.Stateful (IOGenM, applyIOGen, newIOGenM)
 import Test.HUnit.Lang (FailureReason (..), HUnitFailure (..))
 import Test.Hspec (Spec, SpecWith, beforeAll, beforeAllWith)
@@ -66,6 +73,15 @@ import UnliftIO.Exception (
 import UnliftIO.IORef
 #if !MIN_VERSION_base(4,11,0)
 import Data.Monoid ((<>))
+#endif
+
+#if !MIN_VERSION_random(1,3,0)
+splitGen :: RandomGen g => g -> (g, g)
+splitGen = split
+#endif
+
+#if MIN_VERSION_random(1,3,0) && !MIN_VERSION_QuickCheck(2,16,1)
+deriving instance SplitGen QCGen
 #endif
 
 data ImpState t = ImpState
@@ -154,7 +170,7 @@ instance s ~ ImpSpecState t => MonadState s (ImpM t) where
 instance MonadGen (ImpM t) where
   liftGen (MkGen f) = do
     qcSize <- ImpM $ asks impEnvQCSize
-    qcGen <- applyQCGen split
+    qcGen <- applyQCGen splitGen
     pure $ f qcGen qcSize
   variant n action = do
     applyQCGen $ \qcGen -> ((), integerVariant (toInteger n) qcGen)
@@ -169,7 +185,7 @@ instance HasStatefulGen (IOGenM QCGen) (ImpM t) where
 instance (ImpSpec t, Testable a) => Testable (ImpM t a) where
   property m = property $ MkGen $ \qcGen qcSize ->
     ioProperty $ do
-      let (qcGen1, qcGen2) = split qcGen
+      let (qcGen1, qcGen2) = splitGen qcGen
       impInit <- impInitIO qcGen1
       evalImpM (Just qcGen2) (Just qcSize) impInit m
 
@@ -189,7 +205,7 @@ instance (Arbitrary a, Show a, ImpSpec t, Testable p) => Example (a -> ImpM t p)
           (r, testable, logs) <- evalImpM (fst <$> mQC) (snd <$> mQC) impInit $ do
             t <- impTest x
             qcSize <- ImpM $ asks impEnvQCSize
-            qcGen <- applyQCGen split
+            qcGen <- applyQCGen splitGen
             logs <- getLogs
             pure (Just (qcGen, qcSize), t, logs)
           let params' = params {paramsQuickCheckArgs = args {replay = r, chatty = False}}
