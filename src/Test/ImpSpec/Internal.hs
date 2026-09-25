@@ -265,14 +265,12 @@ runImpGenM :: ImpSpec t => ImpInit t -> ImpM t b -> Gen (IO (b, ImpState t))
 runImpGenM impInit m =
   MkGen $ \qcGen qcSize -> runImpM (Just qcGen) (Just qcSize) impInit m
 
-runImpM ::
-  ImpSpec t =>
+newImpEnv ::
   Maybe QCGen ->
   Maybe Int ->
   ImpInit t ->
-  ImpM t b ->
-  IO (b, ImpState t)
-runImpM mQCGen mQCSize ImpInit {impInitEnv, impInitState} action = do
+  IO (ImpEnv t)
+newImpEnv mQCGen mQCSize ImpInit {impInitEnv, impInitState} = do
   let qcSize = fromMaybe 30 mQCSize
       qcGen = fromMaybe (mkQCGen 2024) mQCGen
   ioRef <-
@@ -282,17 +280,26 @@ runImpM mQCGen mQCSize ImpInit {impInitEnv, impInitState} action = do
         , impStateLog = mempty
         }
   qcGenRef <- newIOGenM qcGen
-  let
-    env =
-      ImpEnv
-        { impEnvSpecEnv = impInitEnv
-        , impEnvStateRef = ioRef
-        , impEnvQCGenRef = qcGenRef
-        , impEnvQCSize = qcSize
-        }
+  pure $
+    ImpEnv
+      { impEnvSpecEnv = impInitEnv
+      , impEnvStateRef = ioRef
+      , impEnvQCGenRef = qcGenRef
+      , impEnvQCSize = qcSize
+      }
+
+runImpM ::
+  ImpSpec t =>
+  Maybe QCGen ->
+  Maybe Int ->
+  ImpInit t ->
+  ImpM t b ->
+  IO (b, ImpState t)
+runImpM mQCGen mQCSize impInit action = do
+  env <- newImpEnv mQCGen mQCSize impInit
   res <-
     runReaderT (unImpM (impPrepAction >> action)) env `catchAny` \exc -> do
-      logs <- impStateLog <$> readIORef ioRef
+      logs <- impStateLog <$> readIORef (impEnvStateRef env)
       let x <?> my = case my of
             Nothing -> x
             Just y -> x ++ [pretty y]
@@ -350,7 +357,7 @@ runImpM mQCGen mQCSize ImpInit {impInitEnv, impInitState} action = do
                           Nothing -> H.Failure Nothing $ uncaughtException header excThrown
             | otherwise = H.Failure Nothing $ uncaughtException [logs] exc
       throwIO newExc
-  endState <- readIORef ioRef
+  endState <- readIORef $ impEnvStateRef env
   pure (res, endState)
 
 ansiDocToString :: Doc AnsiStyle -> String

@@ -1,6 +1,6 @@
 cabal-version: 2.4
 name: ImpSpec
-version: 0.2.0.1
+version: 0.2.1.0
 license: Apache-2.0
 license-file: LICENSE
 maintainer: operations@iohk.io
@@ -41,6 +41,7 @@ library
     Test.ImpSpec.Expectations.Lifted
     Test.ImpSpec.Main
     Test.ImpSpec.Random
+    Test.ImpSpec.Repl
 
   hs-source-dirs: src
   other-modules: Test.ImpSpec.Internal
